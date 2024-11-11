@@ -1,4 +1,5 @@
 return {
+  -- Mason: Our automated LSP acquisition protocol
   {
     'williamboman/mason.nvim',
     config = function()
@@ -10,15 +11,16 @@ return {
     config = function()
       require('mason-lspconfig').setup {
         ensure_installed = {
-          'ts_ls',
-          'volar',
-          'svelte',
-          'eslint',
-          'tailwindcss',
-          'cssls',
-          'html',
-          'jsonls',
-          'emmet_ls',
+          -- JavaScript/TypeScript ecosystem
+          'ts_ls', -- TypeScript
+          'volar', -- Vue
+          'svelte', -- Svelte
+          'eslint', -- Linting
+          'tailwindcss', -- TailwindCSS
+          'cssls', -- CSS
+          'html', -- HTML
+          'jsonls', -- JSON
+          'emmet_ls', -- Emmet
         },
         automatic_installation = true,
       }
@@ -29,20 +31,19 @@ return {
   {
     'hrsh7th/nvim-cmp',
     dependencies = {
-      'L3MON4D3/LuaSnip', -- Snippet engine
-      'saadparwaiz1/cmp_luasnip', -- Snippet completion source
-      'hrsh7th/cmp-nvim-lsp', -- LSP completion
-      'hrsh7th/cmp-buffer', -- Buffer completion
-      'hrsh7th/cmp-path', -- Path completion
-      'rafamadriz/friendly-snippets', -- Snippet collection
-      'onsails/lspkind.nvim', -- VSCode-like pictograms
+      'L3MON4D3/LuaSnip',
+      'saadparwaiz1/cmp_luasnip',
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
+      'rafamadriz/friendly-snippets',
+      'onsails/lspkind.nvim',
     },
     config = function()
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
       local lspkind = require 'lspkind'
 
-      -- Load friendly snippets
       require('luasnip.loaders.from_vscode').lazy_load()
 
       cmp.setup {
@@ -90,6 +91,8 @@ return {
             mode = 'symbol_text',
             maxwidth = 50,
             ellipsis_char = '...',
+            fields = { 'kind', 'abbr', 'menu' },
+            expandable_indicator = true,
           },
         },
       }
@@ -103,98 +106,112 @@ return {
       local capabilities = require('cmp_nvim_lsp').default_capabilities()
       local lspconfig = require 'lspconfig'
 
-      -- Diagnostic signs
-      local signs = {
-        Error = ' ',
-        Warn = ' ',
-        Hint = ' ',
-        Info = ' ',
-      }
+      -- Diagnostic signs configuration
+      local signs = { Error = ' ', Warn = ' ', Hint = ' ', Info = ' ' }
       for type, icon in pairs(signs) do
         local hl = 'DiagnosticSign' .. type
         vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
       end
 
-      -- Diagnostic configuration
+      -- Global diagnostic configuration
       vim.diagnostic.config {
-        virtual_text = true, -- Show diagnostics beside code
-        signs = true, -- Show signs in the gutter
-        update_in_insert = false, -- Don't update diagnostics in insert mode
-        underline = true, -- Underline problematic code
-        severity_sort = true, -- Sort diagnostics by severity
+        virtual_text = true,
+        signs = true,
+        update_in_insert = false,
+        underline = true,
+        severity_sort = true,
         float = {
           border = 'rounded',
-          source = 'always',
+          source = true,
         },
+      }
+
+      -- Shared inlay hints configuration
+      local inlay_hints = {
+        includeInlayParameterNameHints = 'all',
+        includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+        includeInlayFunctionParameterTypeHints = true,
+        includeInlayVariableTypeHints = true,
+        includeInlayPropertyDeclarationTypeHints = true,
+        includeInlayFunctionLikeReturnTypeHints = true,
       }
 
       -- LSP servers configuration
       local servers = {
         -- TypeScript/JavaScript
-        tsserver = {
-          -- Disable tsserver if typescript-tools is available
-          autostart = false,
+        ts_ls = {
+          settings = {
+            typescript = {
+              format = { indentSize = 2 },
+              inlayHints = vim.tbl_extend('force', inlay_hints, {
+                includeInlayEnumMemberValueHints = true,
+              }),
+            },
+            javascript = {
+              inlayHints = inlay_hints,
+            },
+          },
         },
-        -- TypeScript Tools (modern replacement for tsserver)
-        typescript = {},
-        -- Vue
-        volar = {},
-        -- Svelte
-        svelte = {},
-        -- ESLint
-        eslint = {
-          on_attach = function(client, bufnr)
-            -- Enable formatting
-            client.server_capabilities.documentFormattingProvider = true
-            -- Auto-fix on save
-            vim.api.nvim_create_autocmd('BufWritePre', {
-              buffer = bufnr,
-              command = 'EslintFixAll',
-            })
-          end,
-        },
-        -- TailwindCSS
-        tailwindcss = {},
-        -- CSS
-        cssls = {},
-        -- HTML
-        html = {},
-        -- JSON
-        jsonls = {},
-        -- Emmet
-        emmet_ls = {},
       }
 
-      -- Setup LSP key bindings
+      -- Add simple servers
+      local simple_servers = {
+        'volar',
+        'svelte',
+        'tailwindcss',
+        'cssls',
+        'html',
+        'jsonls',
+        'emmet_ls',
+      }
+      for _, server in ipairs(simple_servers) do
+        servers[server] = {}
+      end
+
+      -- Setup LSP keybindings
+      local function setup_keymaps(ev)
+        local opts = { buffer = ev.buf }
+        local function open_url()
+          local url = vim.fn.expand '<cWORD>'
+          local open_cmd = {
+            Linux = { 'xdg-open' },
+            Darwin = { 'open' },
+            Windows_NT = { 'cmd', '/c', 'start' },
+          }
+          local sys = vim.fn.has 'win32' and 'Windows_NT' or vim.fn.has 'macunix' and 'Darwin' or 'Linux'
+          local cmd = open_cmd[sys]
+          if cmd then
+            table.insert(cmd, url)
+            vim.fn.jobstart(cmd)
+          end
+        end
+        -- LSP navigation
+        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+        vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+        vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+        vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+        vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+        vim.keymap.set('n', '<leader>f', function()
+          vim.lsp.buf.format { async = true }
+        end, opts)
+
+        -- Diagnostic navigation
+        vim.keymap.set('n', 'gl', vim.diagnostic.open_float, opts)
+        vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+        vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+        vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
+
+        -- URL opener
+        vim.keymap.set('n', '<leader>u', open_url, vim.tbl_extend('force', opts, { desc = 'Open URL under cursor' }))
+      end
+
+      -- Register keymaps on LSP attach
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('UserLspConfig', {}),
-        callback = function(ev)
-          local opts = { buffer = ev.buf }
-          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-          vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-          vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
-          vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-          vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-          vim.keymap.set('n', '<leader>f', function()
-            vim.lsp.buf.format { async = true }
-          end, opts)
-          -- Diagnostic navigation
-          vim.keymap.set('n', 'gl', vim.diagnostic.open_float, opts)
-          vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
-          vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
-          vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
-
-          -- Add URL opener
-          vim.keymap.set('n', '<leader>u', function()
-            local url = vim.fn.expand '<cWORD>' -- Get word under cursor
-            vim.fn.jobstart { 'xdg-open', url } -- Linux
-            -- vim.fn.jobstart({"open", url})     -- macOS
-            -- vim.fn.jobstart({"cmd", "/c", "start", url})  -- Windows
-          end, { buffer = ev.buf, desc = 'Open URL under cursor' })
-        end,
+        callback = setup_keymaps,
       })
 
-      -- Initialize servers
+      -- Initialize all servers with capabilities
       for server, config in pairs(servers) do
         config.capabilities = capabilities
         lspconfig[server].setup(config)
