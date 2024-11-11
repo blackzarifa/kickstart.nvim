@@ -1,7 +1,6 @@
 return {
   'lukas-reineke/indent-blankline.nvim',
   main = 'ibl',
-  ---@module "ibl"
   opts = {
     indent = {
       char = '│',
@@ -15,17 +14,37 @@ return {
       injected_languages = true,
       highlight = 'IblScope',
       priority = 500,
+      -- Include more scope types
+      include = {
+        node_type = {
+          ['*'] = '*', -- This tells treesitter to highlight all scope types
+        },
+      },
     },
     whitespace = {
       remove_blankline_trail = true,
     },
+    exclude = {
+      filetypes = {
+        'help',
+        'dashboard',
+        'lazy',
+        'mason',
+        'notify',
+        'toggleterm',
+      },
+    },
   },
   config = function(_, opts)
+    local hooks = require 'ibl.hooks'
+    -- Set up scope handling
+    hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
+
     require('ibl').setup(opts)
 
     vim.cmd [[
-            highlight! link IblIndent Comment
-            highlight! link IblScope CursorLine
-        ]]
+      highlight! link IblIndent NonText
+      highlight! link IblScope CursorLineNr
+    ]]
   end,
 }
