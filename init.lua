@@ -139,6 +139,13 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Create directories with the file when it doesn't exist
+vim.api.nvim_create_autocmd('BufWritePre', {
+  callback = function()
+    vim.fn.mkdir(vim.fn.expand '%:p:h', 'p')
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
