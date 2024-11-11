@@ -10,7 +10,7 @@ return {
       close_if_last_window = true, -- Close Neo-tree if it is the last window left in the tab
       window = {
         position = 'right',
-        width = 30,
+        width = 40,
         mapping_options = {
           noremap = true,
           nowait = true,
