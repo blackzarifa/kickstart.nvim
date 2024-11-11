@@ -94,8 +94,8 @@ vim.keymap.set('i', '<A-j>', '<Down>')
 vim.keymap.set('i', '<A-k>', '<Up>')
 
 -- Forward and backwards deletion options using Alt
-vim.keymap.set('i', '<A-w>', '<C-o>dw')
-vim.keymap.set('i', '<A-b>', '<C-o>db')
+vim.keymap.set('i', '<C-w>', '<C-o>dw')
+vim.keymap.set('i', '<C-b>', '<C-o>db')
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
