@@ -10,17 +10,14 @@ return {
       enabled = true,
       view = 'cmdline_popup',
       opts = {
-        -- Position and size
         position = {
-          row = '50%',
+          row = '30%',
           col = '50%',
         },
         size = {
-          min_width = 60,
-          width = 'auto',
+          width = 60,
           height = 'auto',
         },
-        -- Appearance
         border = {
           style = 'rounded',
           padding = { 0, 1 },
@@ -31,26 +28,13 @@ return {
             FloatBorder = 'DiagnosticInfo',
           },
         },
-        notify = {
-          enabled = true,
-          view = 'notify',
-          opts = {
-            timeout = 2000,
-            render = 'minimal',
-            stages = 'fade_in_slide_out',
-            fps = 144,
-            level = 2,
-          },
-        },
       },
-      -- Custom icons for different command types
       icons = {
         ['/'] = { icon = ' ', hl_group = 'DiagnosticWarn' },
         ['?'] = { icon = ' ', hl_group = 'DiagnosticWarn' },
         [':'] = { icon = ' ', hl_group = 'DiagnosticInfo' },
       },
     },
-    -- Enhanced search UI
     views = {
       mini = {
         win_options = {
@@ -89,7 +73,6 @@ return {
         },
       },
     },
-    -- Prettier search messages
     routes = {
       {
         filter = {
@@ -107,14 +90,13 @@ return {
         opts = { skip = true },
       },
     },
-    -- Message display settings
     messages = {
       enabled = true,
       view = 'notify',
       view_error = 'notify',
       view_warn = 'notify',
       view_history = 'messages',
-      view_search = false, -- We'll handle search differently
+      view_search = false,
     },
   },
   keys = {
