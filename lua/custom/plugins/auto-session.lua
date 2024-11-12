@@ -18,14 +18,7 @@ return {
       auto_save_enabled = true,
       auto_session_allow_dirs = {},
 
-      -- Hooks for pre/post session save/restore
-      pre_save_cmds = {
-        function()
-          -- Close all nvim-tree windows before saving
-          require('nvim-tree.api').tree.close()
-        end,
-        'NeoTreeClose',
-      },
+      pre_save_cmds = {},
 
       -- Custom session name formatting
       session_lens = {
@@ -42,7 +35,8 @@ return {
 
     -- Keymaps for session management
     vim.keymap.set('n', '<leader>ss', '<cmd>SessionSave<CR>', { desc = 'Save Session' })
-    vim.keymap.set('n', '<leader>sl', '<cmd>SessionLoad<CR>', { desc = 'Load Session' })
     vim.keymap.set('n', '<leader>sd', '<cmd>SessionDelete<CR>', { desc = 'Delete Session' })
+    vim.keymap.set('n', '<leader>sr', '<cmd>SessionRestore<CR>', { desc = 'Restore Session' })
+    vim.keymap.set('n', '<leader>sf', '<cmd>SessionSearch<CR>', { desc = 'Find Session' })
   end,
 }
