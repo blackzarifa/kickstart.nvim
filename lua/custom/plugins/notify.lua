@@ -1,6 +1,11 @@
 return {
   'rcarriga/nvim-notify',
   event = 'VeryLazy',
+  config = function()
+    require('which-key').add {
+      { '<leader>n', group = 'Notifications' },
+    }
+  end,
   opts = {
     timeout = 2000,
     max_height = function()

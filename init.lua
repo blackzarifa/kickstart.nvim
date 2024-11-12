@@ -277,7 +277,6 @@ require('lazy').setup({
         { '<leader>d', group = '[D]ocument' },
         { '<leader>r', group = '[R]ename' },
         { '<leader>f', group = '[F]ind', icon = { icon = '󰭎', color = 'blue' } },
-        { '<leader>n', group = '[N]otifications', icon = { icon = '󰎟', color = 'red' } },
         { '<leader>w', group = '[W]orkspace' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
