@@ -14,6 +14,8 @@ vim.g.maplocalleader = ' '
 
 vim.g.have_nerd_font = true
 
+vim.cmd [[language en_US.UTF-8]]
+
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!
@@ -215,7 +217,7 @@ require('lazy').setup({
   -- after the plugin has been loaded:
   --  config = function() ... end
 
-  { -- Useful plugin to show you pending keybinds.
+  {
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     opts = {
@@ -254,6 +256,19 @@ require('lazy').setup({
           F11 = '<F11>',
           F12 = '<F12>',
         },
+        breadcrumb = '»',
+        separator = '➜',
+        group = '+',
+      },
+      win = {
+        border = 'rounded',
+        padding = { 2, 2, 2, 2 },
+      },
+      layout = {
+        height = { min = 4, max = 25 },
+        width = { min = 20, max = 50 },
+        spacing = 3,
+        align = 'center',
       },
 
       -- Document existing key chains
