@@ -17,9 +17,35 @@ return {
     {
       '<leader>nt',
       function()
-        require('telescope').extensions.notify.notify()
+        local actions = require 'telescope.actions'
+        local action_state = require 'telescope.actions.state'
+
+        local copy_notification = function(prompt_bufnr)
+          local selection = action_state.get_selected_entry()
+          if selection then
+            local message = selection.value.message
+            vim.fn.setreg('+', message)
+            vim.notify('Notification copied to clipboard', vim.log.levels.INFO)
+          end
+        end
+
+        require('telescope').extensions.notify.notify {
+          layout_strategy = 'vertical',
+          layout_config = {
+            width = 0.6,
+            height = 0.6,
+          },
+          initial_mode = 'normal',
+          results_title = 'Notification History',
+          sorting_strategy = 'descending',
+          -- Press 'c' inside the telescope to copy the notification
+          attach_mappings = function(_, map)
+            map('n', 'c', copy_notification)
+            return true
+          end,
+        }
       end,
-      desc = 'Show Notifications',
+      desc = 'Show Notifications (Telescope)',
     },
     {
       '<leader>nc',
