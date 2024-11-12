@@ -16,7 +16,9 @@ return {
           nowait = true,
         },
         mappings = {
-          -- File operations
+          -- Explicitly disable space
+          ['<space>'] = 'none', -- File operations
+
           ['a'] = {
             command = 'add',
             config = { show_path = 'relative' }, -- Adds new file/directory

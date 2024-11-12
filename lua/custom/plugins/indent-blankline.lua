@@ -46,7 +46,6 @@ return {
     -- Show whitespace characters in a subtle way
     vim.opt.list = true
     vim.opt.listchars:append {
-      space = '·', -- Middle dot for spaces
       tab = '▸ ', -- Match the tab_char style
       trail = '•', -- Bullet for trailing spaces
     }
