@@ -258,7 +258,7 @@ require('lazy').setup({
         },
         breadcrumb = '»',
         separator = '➜',
-        group = '+',
+        group = '',
       },
       win = {
         border = 'rounded',
@@ -276,7 +276,8 @@ require('lazy').setup({
         { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
         { '<leader>d', group = '[D]ocument' },
         { '<leader>r', group = '[R]ename' },
-        { '<leader>s', group = '[S]earch' },
+        { '<leader>s', group = '[S]earch', icon = { icon = '󰭎', color = 'blue' } },
+        { '<leader>n', group = '[N]otifications', icon = { icon = '󰎟', color = 'red' } },
         { '<leader>w', group = '[W]orkspace' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
