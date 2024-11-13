@@ -189,7 +189,7 @@ require('lazy').setup({
   --    require('gitsigns').setup({ ... })
   --
   -- See `:help gitsigns` to understand what the configuration keys do
-  { -- Adds git related signs to the gutter, as well as utilities for managing changes
+  --[[ { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {
       signs = {
@@ -200,7 +200,7 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
     },
-  },
+  }, ]]
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --

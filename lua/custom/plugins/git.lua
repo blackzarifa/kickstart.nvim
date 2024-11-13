@@ -126,4 +126,11 @@ return {
       end,
     },
   },
+  {
+    'kdheepak/lazygit.nvim',
+    event = 'VeryLazy',
+    config = function()
+      vim.keymap.set('n', '<leader>gg', ':LazyGit<CR>', { desc = 'LazyGit' })
+    end,
+  },
 }
