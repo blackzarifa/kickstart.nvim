@@ -21,6 +21,7 @@ return {
           'html', -- HTML
           'jsonls', -- JSON
           'emmet_ls', -- Emmet
+          'lua_ls',
         },
         automatic_installation = true,
       }
@@ -86,12 +87,12 @@ return {
           { name = 'path' },
         },
         formatting = {
+          fields = { 'kind', 'abbr', 'menu' },
+          expandable_indicator = true,
           format = lspkind.cmp_format {
             mode = 'symbol_text',
             maxwidth = 50,
             ellipsis_char = '...',
-            fields = { 'kind', 'abbr', 'menu' },
-            expandable_indicator = true,
           },
         },
       }
@@ -151,6 +152,18 @@ return {
             },
           },
         },
+        lua_ls = {
+          settings = {
+            Lua = {
+              runtime = {
+                version = 'LuaJIT',
+              },
+              telemetry = {
+                enable = false,
+              },
+            },
+          },
+        },
       }
 
       -- Add simple servers
@@ -187,18 +200,12 @@ return {
         -- LSP navigation
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-        vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
-        vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
         vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-        vim.keymap.set('n', '<leader>f', function()
-          vim.lsp.buf.format { async = true }
-        end, opts)
 
         -- Diagnostic navigation
         vim.keymap.set('n', 'gl', vim.diagnostic.open_float, opts)
         vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
         vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
-        vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
 
         -- URL opener
         vim.keymap.set('n', '<leader>u', open_url, vim.tbl_extend('force', opts, { desc = 'Open URL under cursor' }))

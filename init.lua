@@ -262,20 +262,19 @@ require('lazy').setup({
       },
       win = {
         border = 'rounded',
-        padding = { 2, 2, 2, 2 },
+        padding = { 2, 2 },
       },
       layout = {
-        height = { min = 4, max = 25 },
-        width = { min = 20, max = 50 },
-        spacing = 3,
+        width = { min = 20 },
+        spacing = 4,
         align = 'center',
       },
 
       -- Document existing key chains
       spec = {
-        { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
+        { '<leader>c', group = 'Code', mode = { 'n', 'x' } },
         { '<leader>d', group = '[D]ocument' },
-        { '<leader>r', group = '[R]ename' },
+        { '<leader>r', group = 'Rename' },
         { '<leader>w', group = '[W]orkspace' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
