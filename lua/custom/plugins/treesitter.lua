@@ -2,15 +2,6 @@ return {
   'nvim-treesitter/nvim-treesitter-textobjects',
   dependencies = { 'nvim-treesitter/nvim-treesitter' },
   config = function()
-    -- Disable mini.ai's function text objects
-    require('mini.ai').setup {
-      custom_textobjects = {
-        f = false, -- Disable mini.ai function textobject
-        c = false, -- Disable mini.ai class textobject
-      },
-      n_lines = 500,
-    }
-
     require('nvim-treesitter.configs').setup {
       textobjects = {
         select = {
