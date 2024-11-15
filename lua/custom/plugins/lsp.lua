@@ -1,80 +1,57 @@
 return {
-  -- Mason: Our automated LSP acquisition protocol
-  {
-    'williamboman/mason.nvim',
-    config = function()
-      require('mason').setup()
-    end,
-  },
+  { 'williamboman/mason.nvim', config = true },
+
+  -- Mason-lspconfig: Bridges Mason with Neovim's LSP
   {
     'williamboman/mason-lspconfig.nvim',
     config = function()
       require('mason-lspconfig').setup {
+        -- List of LSPs to automatically install
         ensure_installed = {
-          -- JavaScript/TypeScript ecosystem
           'ts_ls', -- TypeScript
-          'volar', -- Vue
-          'svelte', -- Svelte
-          'eslint', -- Linting
-          'tailwindcss', -- TailwindCSS
+          'lua_ls', -- Lua
           'cssls', -- CSS
           'html', -- HTML
           'jsonls', -- JSON
           'emmet_ls', -- Emmet
-          'lua_ls',
+          -- Framework LSPs
+          'volar', -- Vue
+          'svelte', -- Svelte
         },
         automatic_installation = true,
       }
     end,
   },
 
-  -- nvim-cmp: The completion testing protocol
+  -- nvim-cmp: Autocompletion
   {
     'hrsh7th/nvim-cmp',
     dependencies = {
-      'L3MON4D3/LuaSnip',
-      'saadparwaiz1/cmp_luasnip',
-      'hrsh7th/cmp-nvim-lsp',
-      'hrsh7th/cmp-path',
-      'rafamadriz/friendly-snippets',
-      'onsails/lspkind.nvim',
+      'hrsh7th/cmp-nvim-lsp', -- LSP source for nvim-cmp
+      'hrsh7th/cmp-path', -- Filesystem paths
     },
     config = function()
       local cmp = require 'cmp'
-      local luasnip = require 'luasnip'
-      local lspkind = require 'lspkind'
-
-      require('luasnip.loaders.from_vscode').lazy_load()
-
       cmp.setup {
-        snippet = {
-          expand = function(args)
-            luasnip.lsp_expand(args.body)
-          end,
-        },
-        window = {
-          completion = cmp.config.window.bordered(),
-          documentation = cmp.config.window.bordered(),
-        },
         mapping = cmp.mapping.preset.insert {
+          -- Scroll up/down in the documentation window
           ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-          ['<C-f>'] = cmp.mapping.scroll_docs(4),
-          ['<C-Space>'] = cmp.mapping.complete(),
+          ['<C-u>'] = cmp.mapping.scroll_docs(4),
+
+          -- Complete with Enter
           ['<CR>'] = cmp.mapping.confirm { select = true },
+
+          -- Navigate the completion menu
+          ['<C-n>'] = cmp.mapping.select_next_item(),
+          ['<C-p>'] = cmp.mapping.select_prev_item(),
+
+          -- Trigger completion menu
+          ['<C-Space>'] = cmp.mapping.complete(),
+
+          -- Use Tab for both completion and jumping
           ['<Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
               cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then
-              luasnip.expand_or_jump()
-            else
-              fallback()
-            end
-          end, { 'i', 's' }),
-          ['<S-Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-              cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
-              luasnip.jump(-1)
             else
               fallback()
             end
@@ -82,144 +59,96 @@ return {
         },
         sources = cmp.config.sources {
           { name = 'nvim_lsp' },
-          { name = 'luasnip' },
-          { name = 'buffer' },
           { name = 'path' },
-        },
-        formatting = {
-          fields = { 'kind', 'abbr', 'menu' },
-          expandable_indicator = true,
-          format = lspkind.cmp_format {
-            mode = 'symbol_text',
-            maxwidth = 50,
-            ellipsis_char = '...',
-          },
         },
       }
     end,
   },
 
-  -- LSP Configuration and Management
+  -- The main LSP config
   {
     'neovim/nvim-lspconfig',
     config = function()
-      local capabilities = require('cmp_nvim_lsp').default_capabilities()
       local lspconfig = require 'lspconfig'
 
-      -- Diagnostic signs configuration
-      local signs = { Error = ' ', Warn = ' ', Hint = ' ', Info = ' ' }
-      for type, icon in pairs(signs) do
-        local hl = 'DiagnosticSign' .. type
-        vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-      end
-
-      -- Global diagnostic configuration
-      vim.diagnostic.config {
-        virtual_text = true,
-        signs = true,
-        update_in_insert = false,
-        underline = true,
-        severity_sort = true,
-        float = {
-          border = 'rounded',
-          source = true,
-        },
-      }
-
-      -- Shared inlay hints configuration
-      local inlay_hints = {
-        includeInlayParameterNameHints = 'all',
-        includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-        includeInlayFunctionParameterTypeHints = true,
-        includeInlayVariableTypeHints = true,
-        includeInlayPropertyDeclarationTypeHints = true,
-        includeInlayFunctionLikeReturnTypeHints = true,
-      }
+      local capabilities = vim.lsp.protocol.make_client_capabilities()
+      capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
       -- LSP servers configuration
       local servers = {
-        -- TypeScript/JavaScript
-        ts_ls = {
-          settings = {
-            typescript = {
-              format = { indentSize = 2 },
-              inlayHints = vim.tbl_extend('force', inlay_hints, {
-                includeInlayEnumMemberValueHints = true,
-              }),
-            },
-            javascript = {
-              inlayHints = inlay_hints,
-            },
-          },
-        },
         lua_ls = {
           settings = {
             Lua = {
-              runtime = {
-                version = 'LuaJIT',
-              },
-              telemetry = {
-                enable = false,
+              completion = {
+                callSnippet = 'Replace',
               },
             },
           },
         },
+        -- TypeScript config with inlay hints
+        ts_ls = {
+          settings = {
+            typescript = {
+              inlayHints = {
+                includeInlayParameterNameHints = 'all',
+                includeInlayEnumMemberValueHints = true,
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHints = true,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+              },
+            },
+          },
+        },
+        volar = {
+          filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json' },
+        },
+        svelte = {},
+        cssls = {},
+        html = {},
+        jsonls = {},
+        emmet_ls = {},
       }
 
-      -- Add simple servers
-      local simple_servers = {
-        'volar',
-        'svelte',
-        'tailwindcss',
-        'cssls',
-        'html',
-        'jsonls',
-        'emmet_ls',
+      require('mason-lspconfig').setup {
+        handlers = {
+          function(server_name)
+            local server = servers[server_name] or {}
+            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+            lspconfig[server_name].setup(server)
+          end,
+        },
       }
-      for _, server in ipairs(simple_servers) do
-        servers[server] = {}
-      end
 
-      -- Setup LSP keybindings
-      local function setup_keymaps(ev)
-        local opts = { buffer = ev.buf }
-        local function open_url()
-          local url = vim.fn.expand '<cWORD>'
-          local open_cmd = {
-            Linux = { 'xdg-open' },
-            Darwin = { 'open' },
-            Windows_NT = { 'cmd', '/c', 'start' },
-          }
-          local sys = vim.fn.has 'win32' and 'Windows_NT' or vim.fn.has 'macunix' and 'Darwin' or 'Linux'
-          local cmd = open_cmd[sys]
-          if cmd then
-            table.insert(cmd, url)
-            vim.fn.jobstart(cmd)
-          end
-        end
-        -- LSP navigation
-        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-        vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-        vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-
-        -- Diagnostic navigation
-        vim.keymap.set('n', 'gl', vim.diagnostic.open_float, opts)
-        vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
-        vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
-
-        -- URL opener
-        vim.keymap.set('n', '<leader>u', open_url, vim.tbl_extend('force', opts, { desc = 'Open URL under cursor' }))
-      end
-
-      -- Register keymaps on LSP attach
+      -- Setup keybindings when an LSP attaches to a buffer
       vim.api.nvim_create_autocmd('LspAttach', {
-        group = vim.api.nvim_create_augroup('UserLspConfig', {}),
-        callback = setup_keymaps,
+        group = vim.api.nvim_create_augroup('UserLspConfig', { clear = true }),
+        callback = function(ev)
+          -- Enable completion triggered by <c-x><c-o>
+          vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+
+          -- Buffer local mappings
+          local opts = { buffer = ev.buf }
+
+          -- See `:help vim.lsp.*` for documentation on any of these functions
+          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+          vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+          vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+          vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, opts)
+          vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+
+          -- Toggle inlay hints for supported languages
+          local client = vim.lsp.get_client_by_id(ev.data.client_id)
+          if client and client.supports_method 'textDocument/inlayHint' then
+            vim.keymap.set('n', '<leader>ch', function()
+              vim.lsp.inlay_hint.enable(ev.buf, not vim.lsp.inlay_hint.is_enabled(ev.buf))
+            end, opts)
+          end
+        end,
       })
 
-      -- Initialize all servers with capabilities
+      -- Initialize all servers with their configurations
       for server, config in pairs(servers) do
-        config.capabilities = capabilities
         lspconfig[server].setup(config)
       end
     end,
