@@ -23,7 +23,7 @@ return {
       }
 
       -- Add spaces between parentheses
-      local brackets = { { '(', ')' }, { '[', ']' }, { '{', '}' } }
+      local brackets = { { '(', ')' }, { '[', ']' }, { '{', '}' }, { '<', '>' } }
       npairs.add_rules {
         Rule(' ', ' '):with_pair(function(opts)
           local pair = opts.line:sub(opts.col - 1, opts.col)
