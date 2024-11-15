@@ -65,6 +65,23 @@ return {
     end,
   },
 
+  -- Plugin for showing LSP progress
+  {
+    -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
+    'j-hui/fidget.nvim',
+    opts = {},
+  },
+
+  -- Automatically installs LSP server and tools
+  {
+    'WhoIsSethDaniel/mason-tool-installer.nvim',
+    config = function()
+      require('mason-tool-installer').setup {
+        ensure_installed = vim.tbl_keys(servers or {}),
+      }
+    end,
+  },
+
   -- The main LSP config
   {
     'neovim/nvim-lspconfig',
