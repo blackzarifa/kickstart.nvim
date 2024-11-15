@@ -5,23 +5,23 @@ return {
     config = function()
       -- Git grouping
       require('which-key').add {
-        { '<leader>g', group = 'Git' },
+        { '<leader>G', group = 'Git' },
       }
       -- Git interface synchronization protocols
       local keymap = vim.keymap.set
-      keymap('n', '<leader>gs', vim.cmd.Git, { desc = 'Git [S]tatus' })
-      keymap('n', '<leader>gc', function()
+      keymap('n', '<leader>Gs', vim.cmd.Git, { desc = 'Git Status' })
+      keymap('n', '<leader>Gc', function()
         vim.cmd 'Git commit'
-      end, { desc = 'Git [C]ommit' })
-      keymap('n', '<leader>gp', function()
+      end, { desc = 'Git Commit' })
+      keymap('n', '<leader>Gp', function()
         vim.cmd 'Git push'
-      end, { desc = 'Git [P]ush' })
-      keymap('n', '<leader>gl', function()
+      end, { desc = 'Git Push' })
+      keymap('n', '<leader>Gl', function()
         vim.cmd 'Git pull'
       end, { desc = 'Git Pu[L]l' })
-      keymap('n', '<leader>gb', function()
+      keymap('n', '<leader>Gb', function()
         vim.cmd 'Git blame'
-      end, { desc = 'Git [B]lame' })
+      end, { desc = 'Git Blame' })
     end,
   },
   {
@@ -50,9 +50,9 @@ return {
 
       -- Temporal modification interface
       local keymap = vim.keymap.set
-      keymap('n', '<leader>gd', '<cmd>DiffviewOpen<cr>', { desc = 'Git [D]iff View' })
-      keymap('n', '<leader>gh', '<cmd>DiffviewFileHistory<cr>', { desc = 'Git [H]istory' })
-      keymap('n', '<leader>gq', '<cmd>DiffviewClose<cr>', { desc = 'Git Diff [Q]uit' })
+      keymap('n', '<leader>Gd', '<cmd>DiffviewOpen<cr>', { desc = 'Git Diff View' })
+      keymap('n', '<leader>Gh', '<cmd>DiffviewFileHistory<cr>', { desc = 'Git History' })
+      keymap('n', '<leader>Gq', '<cmd>DiffviewClose<cr>', { desc = 'Git Diff Quit' })
     end,
   },
   {
@@ -102,27 +102,27 @@ return {
         end, { expr = true, desc = 'Previous hunk' })
 
         -- Data manipulation interfaces
-        map('n', '<leader>hs', gs.stage_hunk, { desc = 'Stage hunk' })
-        map('n', '<leader>hr', gs.reset_hunk, { desc = 'Reset hunk' })
-        map('v', '<leader>hs', function()
+        map('n', '<leader>Hs', gs.stage_hunk, { desc = 'Stage hunk' })
+        map('n', '<leader>Hr', gs.reset_hunk, { desc = 'Reset hunk' })
+        map('v', '<leader>Hs', function()
           gs.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
         end, { desc = 'Stage hunk' })
-        map('v', '<leader>hr', function()
+        map('v', '<leader>Hr', function()
           gs.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
         end, { desc = 'Reset hunk' })
-        map('n', '<leader>hS', gs.stage_buffer, { desc = 'Stage buffer' })
-        map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'Undo stage hunk' })
-        map('n', '<leader>hR', gs.reset_buffer, { desc = 'Reset buffer' })
-        map('n', '<leader>hp', gs.preview_hunk, { desc = 'Preview hunk' })
-        map('n', '<leader>hb', function()
+        map('n', '<leader>HS', gs.stage_buffer, { desc = 'Stage buffer' })
+        map('n', '<leader>Hu', gs.undo_stage_hunk, { desc = 'Undo stage hunk' })
+        map('n', '<leader>HR', gs.reset_buffer, { desc = 'Reset buffer' })
+        map('n', '<leader>Hp', gs.preview_hunk, { desc = 'Preview hunk' })
+        map('n', '<leader>Hb', function()
           gs.blame_line { full = true }
         end, { desc = 'Blame line' })
-        map('n', '<leader>hB', gs.toggle_current_line_blame, { desc = 'Toggle line blame' })
-        map('n', '<leader>hd', gs.diffthis, { desc = 'Diff this' })
-        --[[ map('n', '<leader>hD', function()
+        map('n', '<leader>HB', gs.toggle_current_line_blame, { desc = 'Toggle line blame' })
+        map('n', '<leader>Hd', gs.diffthis, { desc = 'Diff this' })
+        --[[ map('n', '<leader>HD', function()
           gs.diffthis '~'
         end, { desc = 'Diff this ~' }) ]]
-        map('n', '<leader>hD', gs.toggle_deleted, { desc = 'Toggle deleted' })
+        map('n', '<leader>HD', gs.toggle_deleted, { desc = 'Toggle deleted' })
       end,
     },
   },
@@ -130,7 +130,7 @@ return {
     'kdheepak/lazygit.nvim',
     event = 'VeryLazy',
     config = function()
-      vim.keymap.set('n', '<leader>gg', ':LazyGit<CR>', { desc = 'LazyGit' })
+      vim.keymap.set('n', '<leader>Gg', ':LazyGit<CR>', { desc = 'LazyGit' })
     end,
   },
 }

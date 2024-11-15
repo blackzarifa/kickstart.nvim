@@ -277,7 +277,7 @@ require('lazy').setup({
         { '<leader>r', group = 'Rename' },
         { '<leader>w', group = '[W]orkspace' },
         { '<leader>t', group = '[T]oggle' },
-        { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>H', group = 'Git Hunk', mode = { 'n', 'v' } },
       },
     },
   },
